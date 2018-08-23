@@ -1,16 +1,20 @@
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
  * An inverted index represented by a HashMap
  * with key: (String) -> value: (IndexEntry) mappings.
- * 
+ *
  */
 public class InvertedIndex {
 
     private HashMap<String, IndexEntry> index;
-    public InvertedIndex() {
+    private LinkedList<Document> documents;
+
+    public InvertedIndex(LinkedList<Document> documents) {
         index = new HashMap<>();
+        this.documents = documents;
     }
 
     /**
@@ -81,7 +85,7 @@ public class InvertedIndex {
     }
 
     /**
-     * Does a single term frequency query.
+     * Does a single term query.
      * @param term the query word
      * @return Returns the documents ordered by term frequency.
      */

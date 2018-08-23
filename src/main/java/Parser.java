@@ -39,16 +39,14 @@ public class Parser {
      * @param documents
      * @return a sorted list of <String, Integer> pairs.
      */
-    public LinkedList<Pair<String, Integer>> createTokenDocumentPairs(LinkedList<String> documents) {
+    public LinkedList<Pair<String, Integer>> createTokenDocumentIdPairs(LinkedList<Document> documents) {
         String spaceDelimiter = " ";
         LinkedList<Pair<String, Integer>> tokenDocumentPairs = new LinkedList<>();
 
-        AtomicInteger documentId = new AtomicInteger(0);
-        documents.forEach(line -> {
-            Arrays.stream(line.split(spaceDelimiter)).forEach(token -> {
-                tokenDocumentPairs.add(new Pair<>(token, documentId.get()));
+        documents.forEach(document -> {
+            Arrays.stream(document.getContent().split(spaceDelimiter)).forEach(word -> {
+                tokenDocumentPairs.add(new Pair<>(word, document.getId()));
             });
-            documentId.incrementAndGet();
         });
 
         tokenDocumentPairs.sort((o1, o2) -> {
@@ -86,8 +84,8 @@ public class Parser {
      * @param tokenDocumentPairs
      */
     public InvertedIndex
-    createInvertedIndex(LinkedList<Pair<String, Integer>> tokenDocumentPairs) {
-        InvertedIndex invertedIndex = new InvertedIndex();
+    createInvertedIndex(LinkedList<Pair<String, Integer>> tokenDocumentPairs, LinkedList<Document> documents) {
+        InvertedIndex invertedIndex = new InvertedIndex(documents);
 
         Iterator<Pair<String, Integer>> iterator = tokenDocumentPairs.iterator();
 

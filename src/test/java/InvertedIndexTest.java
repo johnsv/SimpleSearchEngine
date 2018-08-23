@@ -6,19 +6,26 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class InvertedIndexTest {
-    private static LinkedList<String> documents;
+    private static LinkedList<Document> documents;
     static Parser parser = new Parser();
     static InvertedIndex invertedIndex;
 
     @BeforeClass
     public static void testSetup() {
-        documents = new LinkedList<>();
-        documents.add("the brown fox jumped over the brown dog");
-        documents.add("the lazy brown dog sat in the corner");
-        documents.add("the red fox bit the lazy dog");
-        invertedIndex = parser.createInvertedIndex(parser.createTokenDocumentPairs(documents));
+        LinkedList<String> documentContents = new LinkedList<>();
+        documentContents.add("the brown fox jumped over the brown dog");
+        documentContents.add("the lazy brown dog sat in the corner");
+        documentContents.add("the red fox bit the lazy dog");
+        LinkedList<Document> documents = new LinkedList<>();
+        AtomicInteger docId = new AtomicInteger(0);
+        documentContents.forEach(documentContent -> {
+            documents.add(new Document(docId.getAndIncrement(), documentContent));
+        });
+        invertedIndex = parser.createInvertedIndex(parser.createTokenDocumentIdPairs(documents), documents);
+
     }
 
     @Test

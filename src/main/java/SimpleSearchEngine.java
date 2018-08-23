@@ -1,5 +1,6 @@
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A simple search engine capable of doing single term queries
@@ -20,10 +21,15 @@ public class SimpleSearchEngine {
     public SimpleSearchEngine(String fileName) {
         Parser parser = new Parser();
         InvertedIndex invertedIndex;
-        LinkedList<String> documents = parser.readFile(fileName);
-        LinkedList<Parser.Pair<String, Integer>> tokenDocumentPairs = parser.createTokenDocumentPairs(documents);
+        LinkedList<String> documentContents = parser.readFile(fileName);
+        LinkedList<Document> documents = new LinkedList<>();
+        AtomicInteger docId = new AtomicInteger(0);
+        documentContents.forEach(documentContent -> {
+            documents.add(new Document(docId.getAndIncrement(), documentContent));
+        });
+        LinkedList<Parser.Pair<String, Integer>> tokenDocumentIdPairs = parser.createTokenDocumentIdPairs(documents);
 
-        invertedIndex = parser.createInvertedIndex(tokenDocumentPairs);
+        invertedIndex = parser.createInvertedIndex(tokenDocumentIdPairs, documents);
 
         query(invertedIndex, false);
     }
